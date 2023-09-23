@@ -1,6 +1,29 @@
+// colors
 $primary: #C69749;
 $secondary: #735F32;
 $accent: #C84B31;
 $bg-left: #000;
 $bg-right: #282A3A;
 $emphasis: #864879;
+
+// fonts
+$interactive-font-size: 1.5rem;
+
+@mixin breakpoint($point) {
+    @if $point == md {
+        // 768px
+        @media (min-width: 48em) {
+            @content;
+        }
+    } @else if $point == lg {
+        // 1024px
+        @media (min-width: 64em) {
+            @content;
+        }
+    } @else if $point == xl {
+        // 1280px
+        @media (min-width: 80em) {
+            @content;
+        }
+    }
+}

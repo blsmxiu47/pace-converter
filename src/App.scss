@@ -20,21 +20,39 @@ header {
     background-image: linear-gradient(90deg, $bg-left 0%, $bg-right 100%);
 }
 
+.converter {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    @include breakpoint(md) {
+        flex-direction: row;
+    }
+}
+
+.inputs-row {
+    color: #fff;
+    font-size: $interactive-font-size;
+}
+
 .input-time {
     display: inline;
     border: none;
     background-color: transparent;
     padding-block: 0;
     padding-inline: 0;
+    text-align: center;
+    // padding: 0.25rem;
     color: #fff;
-    width: 1rem;
+    font-size: $interactive-font-size;
+    width: $interactive-font-size * 1.75;
 
     &:focus {
         outline: 1px solid $accent;
         border-radius: 4px;
     }
 }
-
 
 footer {
     display: flex;
@@ -49,10 +67,20 @@ footer {
         flex-wrap: wrap;
         justify-content: center;
 
+        @include breakpoint(md) {
+            flex-direction: row;
+        }
+
+        li {
+            margin: 0.5rem 0;
+        }
+
         a {
             display: flex;
             align-items: center;
             padding: 0 1rem;
+            text-decoration: none;
+            color: #fff;
 
             svg {
                 margin-right: 0.5rem;
