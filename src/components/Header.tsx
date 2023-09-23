@@ -1,5 +1,3 @@
-import '../styles/globals.scss'
-
 const Header = () => {
     return (
         <header>

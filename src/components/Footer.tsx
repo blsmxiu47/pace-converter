@@ -1,5 +1,3 @@
-import '../styles/globals.scss'
-
 const Footer = () => {
     return (
         <footer className="footer">
