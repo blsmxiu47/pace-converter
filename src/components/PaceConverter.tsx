@@ -1,11 +1,24 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import useDebounce from '../hooks/useDebounce';
 
 const KM_TO_MI = 0.62137119;
 const debounceDelay = 200;
+// TODO: make use of this function appropriately (Handling type number vs string is not so trivial maybe)
 const padZero = (num: number) => (num < 10 ? `0${num}` : `${num}`);
 
 const PaceConverter: React.FC = () => {
+    const minPerKmMinRef = useRef<HTMLInputElement>(null);
+    const minPerKmSecRef = useRef<HTMLInputElement>(null);
+    const minPerMiMinRef = useRef<HTMLInputElement>(null);
+    const minPerMiSecRef = useRef<HTMLInputElement>(null);
+
+    const selectAllText = (inputRef: React.RefObject<HTMLInputElement>) => {
+        if (inputRef.current) {
+            inputRef.current.select();
+        }
+    }
+
+
     const [minPerKmMin, setMinPerKmMin] = useState<number>(0);
     const [minPerKmSec, setMinPerKmSec] = useState<number>(0);
     const [minPerMiMin, setMinPerMiMin] = useState<number>(0);
@@ -49,7 +62,13 @@ const PaceConverter: React.FC = () => {
 
     const handleMinPerKmSecChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSource('km');
-        const valueStr = e.target.value;
+        const valueStr = e.target.value.toString();
+        if (valueStr != '') {
+            if (!/^\d{1,2}$/.test(valueStr)) return;
+        } else {
+            setIsKmSecValid(true);
+            setMinPerKmSec(0);
+        }
         setIsKmSecValid(valueStr.length === 2);
         const value = e.target.value === '' ? 0 : parseInt(valueStr);
         if (!isNaN(value) && value >= 0 && value < 60) setMinPerKmSec(value);
@@ -63,7 +82,8 @@ const PaceConverter: React.FC = () => {
 
     const handleMinPerMiSecChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSource('mi');
-        const valueStr = e.target.value;
+        const valueStr = e.target.value.toString();
+        if (valueStr.length > 2) return;
         setIsMiSecValid(valueStr.length === 2);
         const value = e.target.value === '' ? 0 : parseInt(valueStr);
         if (!isNaN(value) && value >= 0 && value < 60) setMinPerMiSec(value);
@@ -78,21 +98,25 @@ const PaceConverter: React.FC = () => {
                         <input
                             type="number"
                             className='input-value'
-                            value={minPerKmMin === 0 ? '0' : minPerKmMin}
+                            value={minPerKmMin}
+                            onClick={() => selectAllText(minPerKmMinRef)} 
+                            onFocus={() => selectAllText(minPerKmMinRef)} 
                             onChange={handleMinPerKmMinChange}
                             min={0}
                             max={99}
-                            placeholder='0'
+                            placeholder='m'
                         />
                         :
                         <input
                             type="number"
                             className='input-value'
-                            value={minPerKmSec === 0 ? '00' : minPerKmSec}
+                            value={parseInt(padZero(minPerKmSec))}
+                            onClick={() => selectAllText(minPerKmSecRef)} 
+                            onFocus={() => selectAllText(minPerKmSecRef)} 
                             onChange={handleMinPerKmSecChange}
                             min={0}
                             max={59}
-                            placeholder='00'
+                            placeholder='ss'
                         />
                     </div>
                 </label>
@@ -104,21 +128,25 @@ const PaceConverter: React.FC = () => {
                         <input
                             type="number"
                             className='input-value'
-                            value={minPerMiMin === 0 ? '0' : minPerMiMin}
+                            value={minPerMiMin}
+                            onClick={() => selectAllText(minPerMiMinRef)} 
+                            onFocus={() => selectAllText(minPerMiMinRef)} 
                             onChange={handleMinPerMiMinChange}
                             min={0}
                             max={99}
-                            // placeholder='0'
+                            placeholder='m'
                         />
                         :
                         <input
                             type="number"
                             className='input-value'
-                            value={minPerMiSec === 0 ? '00' : minPerMiSec}
+                            value={parseInt(padZero(minPerMiSec))}
+                            onClick={() => selectAllText(minPerMiSecRef)} 
+                            onFocus={() => selectAllText(minPerMiSecRef)} 
                             onChange={handleMinPerMiSecChange}
                             min={0}
                             max={59}
-                            // placeholder='00'
+                            placeholder='ss'
                         />
                     </div>
                 </label>
