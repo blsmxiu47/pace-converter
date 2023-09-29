@@ -5,6 +5,12 @@ const KM_TO_MI = 0.62137119;
 const debounceDelay = 200;
 // TODO: make use of this function appropriately (Handling type number vs string is not so trivial maybe)
 const padZero = (num: number) => (num < 10 ? `0${num}` : `${num}`);
+const unpadZero = (num: number) => {
+    if (num === 0) {
+        return '0';
+    }
+    return num.toString().replace(/^0+/, '');
+}
 
 const PaceConverter: React.FC = () => {
     const minPerKmMinRef = useRef<HTMLInputElement>(null);
@@ -17,7 +23,6 @@ const PaceConverter: React.FC = () => {
             inputRef.current.select();
         }
     }
-
 
     const [minPerKmMin, setMinPerKmMin] = useState<number>(0);
     const [minPerKmSec, setMinPerKmSec] = useState<number>(0);
@@ -56,37 +61,62 @@ const PaceConverter: React.FC = () => {
 
     const handleMinPerKmMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSource('km');
-        const value = e.target.value === '' ? 0 : parseInt(e.target.value);
-        if (!isNaN(value) && value >= 0 && value < 99) setMinPerKmMin(value);
+        
+        const valueStr = e.target.value.toString().replace(/^0+/, '');
+        
+        if (!/^\d{0,2}$/.test(valueStr)) return;
+
+        const value = valueStr === '' ? 0 : parseInt(valueStr);
+
+        if (isNaN(value) || value < 0 || value > 99) return;
+        
+        setMinPerKmMin(value);
     };
 
     const handleMinPerKmSecChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSource('km');
-        const valueStr = e.target.value.toString();
-        if (valueStr != '') {
-            if (!/^\d{1,2}$/.test(valueStr)) return;
-        } else {
-            setIsKmSecValid(true);
-            setMinPerKmSec(0);
-        }
-        setIsKmSecValid(valueStr.length === 2);
-        const value = e.target.value === '' ? 0 : parseInt(valueStr);
-        if (!isNaN(value) && value >= 0 && value < 60) setMinPerKmSec(value);
+
+        const valueStr = e.target.value.toString().replace(/^0+/, '');
+
+        if (!/^\d{0,2}$/.test(valueStr)) return;
+
+        setIsKmSecValid(true);
+        
+        const value = valueStr === '' ? 0 : parseInt(valueStr, 10);
+        
+        if (isNaN(value) || value < 0 || value > 59) return;
+        
+        setMinPerKmSec(value);
     };
 
     const handleMinPerMiMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSource('mi');
-        const value = e.target.value === '' ? 0 : parseInt(e.target.value);
-        if (!isNaN(value) && value >= 0 && value < 99) setMinPerMiMin(value);
+        
+        let valueStr = e.target.value.toString().replace(/^0+/, '');
+
+        if (!/^\d{0,2}$/.test(valueStr)) return;
+        
+        const value = valueStr === '' ? 0 : parseInt(valueStr, 10);
+        
+        if (isNaN(value) || value < 0 || value > 99) return;
+        
+        setMinPerMiMin(value);
     };
 
     const handleMinPerMiSecChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSource('mi');
-        const valueStr = e.target.value.toString();
-        if (valueStr.length > 2) return;
-        setIsMiSecValid(valueStr.length === 2);
-        const value = e.target.value === '' ? 0 : parseInt(valueStr);
-        if (!isNaN(value) && value >= 0 && value < 60) setMinPerMiSec(value);
+
+        const valueStr = e.target.value.toString().replace(/^0+/, '');
+        
+        if (!/^\d{0,2}$/.test(valueStr)) return;
+
+        setIsMiSecValid(true);
+
+        const value = e.target.value === '' ? 0 : parseInt(valueStr, 10);
+        
+        if (isNaN(value) || value < 0 || value > 59) return;
+        
+        setMinPerMiSec(value);
     };
 
     return (
@@ -97,8 +127,9 @@ const PaceConverter: React.FC = () => {
                     <div className='time-input'>
                         <input
                             type="number"
+                            pattern="\d{0,2}"
                             className='input-value'
-                            value={minPerKmMin}
+                            value={parseInt(unpadZero(minPerKmMin))}
                             onClick={() => selectAllText(minPerKmMinRef)} 
                             onFocus={() => selectAllText(minPerKmMinRef)} 
                             onChange={handleMinPerKmMinChange}
@@ -109,8 +140,9 @@ const PaceConverter: React.FC = () => {
                         :
                         <input
                             type="number"
+                            pattern="\d{0,2}"
                             className='input-value'
-                            value={parseInt(padZero(minPerKmSec))}
+                            value={padZero(minPerKmSec)}
                             onClick={() => selectAllText(minPerKmSecRef)} 
                             onFocus={() => selectAllText(minPerKmSecRef)} 
                             onChange={handleMinPerKmSecChange}
@@ -127,8 +159,9 @@ const PaceConverter: React.FC = () => {
                     <div className='time-input'>
                         <input
                             type="number"
+                            pattern="\d{0,2}"
                             className='input-value'
-                            value={minPerMiMin}
+                            value={parseInt(unpadZero(minPerMiMin))}
                             onClick={() => selectAllText(minPerMiMinRef)} 
                             onFocus={() => selectAllText(minPerMiMinRef)} 
                             onChange={handleMinPerMiMinChange}
@@ -139,8 +172,9 @@ const PaceConverter: React.FC = () => {
                         :
                         <input
                             type="number"
+                            pattern="\d{0,2}"
                             className='input-value'
-                            value={parseInt(padZero(minPerMiSec))}
+                            value={padZero(minPerMiSec)}
                             onClick={() => selectAllText(minPerMiSecRef)} 
                             onFocus={() => selectAllText(minPerMiSecRef)} 
                             onChange={handleMinPerMiSecChange}
