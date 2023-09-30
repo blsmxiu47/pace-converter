@@ -92,7 +92,7 @@ const PaceConverter: React.FC = () => {
     const handleMinPerMiMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSource('mi');
         
-        let valueStr = e.target.value.toString().replace(/^0+/, '');
+        const valueStr = e.target.value.toString().replace(/^0+/, '');
 
         if (!/^\d{0,2}$/.test(valueStr)) return;
         
@@ -112,7 +112,7 @@ const PaceConverter: React.FC = () => {
 
         setIsMiSecValid(true);
 
-        const value = e.target.value === '' ? 0 : parseInt(valueStr, 10);
+        const value = valueStr === '' ? 0 : parseInt(valueStr, 10);
         
         if (isNaN(value) || value < 0 || value > 59) return;
         
