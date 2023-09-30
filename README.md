@@ -16,6 +16,6 @@ This is a simple web app that converts pace (min/km <-> min/mi). Useful when res
 ## Getting Started
 
 1. Clone the repo: ```git clone https://github.com/blsmxiu47/pace-converter.git```
-2. Install dependencies: ```npm install```
-3. Start the server: ```npm start```
-4. View in browser at [http://localhost:3000](http://localhost:3000)
+2. Install dependencies: ```cd pace-converter && npm install```
+3. Start the server: ```npm run dev```
+4. View in browser at [http://localhost:5173](http://localhost:5173)
