@@ -3,7 +3,7 @@ import useDebounce from '../hooks/useDebounce';
 
 const KM_TO_MI = 0.62137119;
 const debounceDelay = 200;
-// TODO: make use of this function appropriately (Handling type number vs string is not so trivial maybe)
+
 const padZero = (num: number) => (num < 10 ? `0${num}` : `${num}`);
 const unpadZero = (num: number) => {
     if (num === 0) {
@@ -19,9 +19,7 @@ const PaceConverter: React.FC = () => {
     const minPerMiSecRef = useRef<HTMLInputElement>(null);
 
     const selectAllText = (inputRef: React.RefObject<HTMLInputElement>) => {
-        if (inputRef.current) {
-            inputRef.current.select();
-        }
+        inputRef.current?.select();
     }
 
     const [minPerKmMin, setMinPerKmMin] = useState<number>(0);
