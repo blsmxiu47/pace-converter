@@ -90,6 +90,7 @@ header {
                 background-color: transparent;
                 text-align: center;
                 color: #fff;
+                font-family: inherit;
                 font-size: $interactive-font-size;
                 width: $interactive-font-size * 2;
 
@@ -97,6 +98,13 @@ header {
                     outline: 1px solid $accent;
                 }
             }
+
+            span {
+                display: inline-flex;
+                vertical-align: 2px;
+                font-size: $interactive-font-size;
+            }
+
         }
     }
 }
