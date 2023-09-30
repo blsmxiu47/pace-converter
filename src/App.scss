@@ -1,8 +1,29 @@
 @import 'styles/variables.scss';
 
+@font-face {
+    font-family: "Quantico-Bold";
+    src: local("Quantico-Bold"),
+    url("./fonts/Quantico-Bold.ttf") format("truetype");
+}
+@font-face {
+    font-family: "Quantico-BoldItalic";
+    src: local("Quantico-BoldItalic"),
+    url("./fonts/Quantico-BoldItalic.ttf") format("truetype");
+}
+@font-face {
+    font-family: "Quantico-Italic";
+    src: local("Quantico-Italic"),
+    url("./fonts/Quantico-Italic.ttf") format("truetype");
+}
+@font-face {
+    font-family: "Quantico-Regular";
+    src: local("Quantico-Regular"),
+    url("./fonts/Quantico-Regular.ttf") format("truetype");
+}
+
 html {
     background-image: linear-gradient(90deg, $bg-left 0%, $bg-right 100%);
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Quantico-Regular', 'Roboto', sans-serif;
     font-size: 16px;
     color: #fff;
 
@@ -18,6 +39,11 @@ header {
     padding: 0 2rem;
     color: #fff;
     background-image: linear-gradient(90deg, $bg-left 0%, $bg-right 100%);
+
+    h1 {
+        font-size: 1.5rem;
+        font-weight: 400;
+    }
 }
 
 .converter {
