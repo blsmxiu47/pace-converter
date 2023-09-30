@@ -187,4 +187,4 @@ const PaceConverter: React.FC = () => {
     );
 }
 
-export default PaceConverter;
+export default PaceConverter
