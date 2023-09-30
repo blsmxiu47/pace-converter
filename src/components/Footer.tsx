@@ -4,7 +4,7 @@ const Footer = () => {
             <ul>
                 <li>
                     <a
-                        href="https://github.com/blsmxiu47"
+                        href="https://github.com/blsmxiu47/pace-converter.git"
                         rel="noopener noreferrer"
                         target="_blank"
                     >
