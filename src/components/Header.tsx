@@ -1,7 +1,9 @@
 const Header = () => {
     return (
         <header>
-            <h1>Pace Converter</h1>
+            <a href="/">
+                <h1>Pace Converter</h1>
+            </a>
         </header>
     )
 }
