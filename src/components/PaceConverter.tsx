@@ -137,7 +137,7 @@ const PaceConverter: React.FC = () => {
                             max={99}
                             placeholder='m'
                         />
-                        :
+                        <span>:</span>
                         <input
                             type="number"
                             pattern="\d{0,2}"
