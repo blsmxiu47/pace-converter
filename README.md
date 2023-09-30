@@ -1,5 +1,7 @@
 # Running Pace Converter Web app with React and TypeScript
 
+![Pace Converter app screenshot](https://raw.githubusercontent.com/blsmxiu47/pace-converter/main/images/app-screenshot.png)
+
 View the app: **[Live Demo](https://main--verdant-naiad-25d8e9.netlify.app/)**
 
 ## App Description
