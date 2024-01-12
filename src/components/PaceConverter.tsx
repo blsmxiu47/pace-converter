@@ -1,16 +1,11 @@
 import { useEffect, useState } from 'react';
 import useDebounce from '../hooks/useDebounce';
 
+import { padZero, unpadZero, handleFocus } from '../utils/utils';
+
 const KM_TO_MI = 0.62137119;
 const debounceDelay = 200;
 
-const padZero = (num: number) => (num < 10 ? `0${num}` : `${num}`);
-const unpadZero = (num: number) => {
-    if (num === 0) {
-        return '0';
-    }
-    return num.toString().replace(/^0+/, '');
-}
 
 const PaceConverter: React.FC = () => {
     const [minPerKmMin, setMinPerKmMin] = useState<number>(0);
@@ -107,10 +102,6 @@ const PaceConverter: React.FC = () => {
         
         setMinPerMiSec(value);
     };
-
-    const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-        e.target.select();
-    }
 
     return (
         <div className="converter">
