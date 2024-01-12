@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import useDebounce from "../hooks/useDebounce"
 import { padZero, unpadZero, handleFocus } from "../utils/utils"
 
-const KM_TO_MI = 0.62137119;
+// const KM_TO_MI = 0.62137119;
 const debounceDelay = 200;
 
 export default function PaceTimeConverter() {
@@ -14,14 +14,14 @@ export default function PaceTimeConverter() {
     const [timeSec, setTimeSec] = useState<number>(0);
 
     const [isKmSecValid, setIsKmSecValid] = useState(true);
-    const [isTimeSecValid, setIsTimeSecValid] = useState(true);
+    // const [isTimeSecValid, setIsTimeSecValid] = useState(true);
 
     const [source, setSource] = useState<'km' | 'mi' | null>(null);
 
     const debouncedMinPerKmMin = useDebounce(minPerKmMin, debounceDelay);
     const debouncedMinPerKmSec = useDebounce(minPerKmSec, debounceDelay);
-    const debouncedTimeMin = useDebounce(timeMin, debounceDelay);
-    const debouncedTimeSec = useDebounce(timeSec, debounceDelay);
+    // const debouncedTimeMin = useDebounce(timeMin, debounceDelay);
+    // const debouncedTimeSec = useDebounce(timeSec, debounceDelay);
   
     // min/km input changed
     useEffect(() => {
