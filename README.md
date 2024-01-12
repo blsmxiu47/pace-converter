@@ -1,4 +1,4 @@
-# Running Pace Converter Web app with React and TypeScript
+# Running Pace Converter Web App
 
 ![Pace Converter app screenshot](https://raw.githubusercontent.com/blsmxiu47/pace-converter/main/images/app-screenshot-v2.png)
 
