@@ -117,6 +117,10 @@ const PaceConverter: React.FC = () => {
         setMinPerMiSec(value);
     };
 
+    const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+        e.target.select();
+    }
+
     return (
         <div className="converter">
             <div className='inputs-row'>
@@ -127,13 +131,11 @@ const PaceConverter: React.FC = () => {
                             type="number"
                             pattern="\d{0,2}"
                             className='input-value'
-                            value={parseInt(unpadZero(minPerKmMin))}
-                            onClick={() => selectAllText(minPerKmMinRef)} 
-                            onFocus={() => selectAllText(minPerKmMinRef)} 
+                            value={unpadZero(minPerKmMin)}
+                            onFocus={handleFocus} 
                             onChange={handleMinPerKmMinChange}
                             min={0}
                             max={99}
-                            placeholder='m'
                         />
                         <span>:</span>
                         <input
@@ -141,12 +143,10 @@ const PaceConverter: React.FC = () => {
                             pattern="\d{0,2}"
                             className='input-value'
                             value={padZero(minPerKmSec)}
-                            onClick={() => selectAllText(minPerKmSecRef)} 
-                            onFocus={() => selectAllText(minPerKmSecRef)} 
+                            onFocus={handleFocus} 
                             onChange={handleMinPerKmSecChange}
                             min={0}
                             max={59}
-                            placeholder='ss'
                         />
                     </div>
                 </label>
@@ -159,13 +159,11 @@ const PaceConverter: React.FC = () => {
                             type="number"
                             pattern="\d{0,2}"
                             className='input-value'
-                            value={parseInt(unpadZero(minPerMiMin))}
-                            onClick={() => selectAllText(minPerMiMinRef)} 
-                            onFocus={() => selectAllText(minPerMiMinRef)} 
+                            value={unpadZero(minPerMiMin)}
+                            onFocus={handleFocus} 
                             onChange={handleMinPerMiMinChange}
                             min={0}
                             max={99}
-                            placeholder='m'
                         />
                         <span>:</span>
                         <input
@@ -173,12 +171,10 @@ const PaceConverter: React.FC = () => {
                             pattern="\d{0,2}"
                             className='input-value'
                             value={padZero(minPerMiSec)}
-                            onClick={() => selectAllText(minPerMiSecRef)} 
-                            onFocus={() => selectAllText(minPerMiSecRef)} 
+                            onFocus={handleFocus} 
                             onChange={handleMinPerMiSecChange}
                             min={0}
                             max={59}
-                            placeholder='ss'
                         />
                     </div>
                 </label>
