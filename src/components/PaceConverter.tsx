@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import useDebounce from '../hooks/useDebounce';
 
 const KM_TO_MI = 0.62137119;
@@ -13,15 +13,6 @@ const unpadZero = (num: number) => {
 }
 
 const PaceConverter: React.FC = () => {
-    const minPerKmMinRef = useRef<HTMLInputElement>(null);
-    const minPerKmSecRef = useRef<HTMLInputElement>(null);
-    const minPerMiMinRef = useRef<HTMLInputElement>(null);
-    const minPerMiSecRef = useRef<HTMLInputElement>(null);
-
-    const selectAllText = (inputRef: React.RefObject<HTMLInputElement>) => {
-        inputRef.current?.select();
-    }
-
     const [minPerKmMin, setMinPerKmMin] = useState<number>(0);
     const [minPerKmSec, setMinPerKmSec] = useState<number>(0);
     const [minPerMiMin, setMinPerMiMin] = useState<number>(0);
