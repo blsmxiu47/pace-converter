@@ -6,7 +6,6 @@ import { padZero, unpadZero, handleFocus } from '../utils/utils';
 const KM_TO_MI = 0.62137119;
 const debounceDelay = 200;
 
-
 const PaceConverter: React.FC = () => {
     const [minPerKmMin, setMinPerKmMin] = useState<number>(0);
     const [minPerKmSec, setMinPerKmSec] = useState<number>(0);
