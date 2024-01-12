@@ -105,28 +105,17 @@ header {
                 height: 2rem;
                 width: 12rem;
             }
-
-            .active {
-                transition-duration: .1s;
-                outline: none;
-                border-style: solid;
-                border-color: $accent;
-            }
         }
-        
+
+        .active, .nav-button:active, .nav-button:focus, .nav-button:hover {
+            transition-duration: .1s;
+            outline: none;
+            border-style: solid;
+            border-color: $accent;
+        }
+
         .nav-button:hover {
-            transition-duration: .1s;
             box-shadow: $accent 0 1px 24px;
-            outline: none;
-            border-style: solid;
-            border-color: $accent;
-        }
-
-        .nav-button:focus, .nav-button:active {
-            transition-duration: .1s;
-            outline: none;
-            border-style: solid;
-            border-color: $accent;
         }
     }
 
