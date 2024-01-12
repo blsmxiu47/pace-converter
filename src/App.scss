@@ -105,6 +105,13 @@ header {
                 height: 2rem;
                 width: 12rem;
             }
+
+            .active {
+                transition-duration: .1s;
+                outline: none;
+                border-style: solid;
+                border-color: $accent;
+            }
         }
         
         .nav-button:hover {
