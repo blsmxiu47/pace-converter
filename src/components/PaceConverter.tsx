@@ -104,7 +104,7 @@ const PaceConverter: React.FC = () => {
 
     return (
         <div className="converter">
-            <div className='inputs-row'>
+            <div className='input-group'>
                 <label>
                     min / km
                     <div className='time-input'>
@@ -132,7 +132,7 @@ const PaceConverter: React.FC = () => {
                     </div>
                 </label>
             </div>
-            <div className='inputs-row'>
+            <div className='input-group'>
                 <label>
                     min / mi
                     <div className='time-input'>
