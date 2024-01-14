@@ -134,7 +134,7 @@ header {
 
 .inputs-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
 
     @include breakpoint(md) {
         grid-template-columns: 1fr 1fr;
@@ -144,9 +144,12 @@ header {
 .input-group {
     display: block;
     padding: 1rem 2rem;
-    max-width: 176px;
     color: #fff;
     font-size: $interactive-font-size;
+
+    &.inputs-grid-item {
+        padding: 0.5rem 1rem;
+    }
 
     label {
         display: block;
