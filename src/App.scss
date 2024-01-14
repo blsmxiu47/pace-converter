@@ -96,7 +96,7 @@ header {
             box-sizing: border-box;
             color: #fff;
             cursor: pointer;
-            height: 2rem;
+            height: 3rem;
             width: 8rem;
             text-align: center;
             transition: all .5s;
@@ -132,9 +132,19 @@ header {
     }
 }
 
-.inputs-row {
+.inputs-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    @include breakpoint(md) {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.input-group {
     display: block;
     padding: 1rem 2rem;
+    max-width: 176px;
     color: #fff;
     font-size: $interactive-font-size;
 
