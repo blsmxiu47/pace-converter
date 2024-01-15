@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import useDebounce from '../hooks/useDebounce';
 
-import { padZero, unpadZero, handleFocus } from '../utils/utils';
+import { padZero, unpadZero, handleFocus, validateTimeInput } from '../utils/utils';
 
 const KM_TO_MI = 0.62137119;
 const debounceDelay = 200;
 
-const PaceConverter: React.FC = () => {
+export default function PaceConverter() {
     const [minPerKmMin, setMinPerKmMin] = useState<number>(0);
     const [minPerKmSec, setMinPerKmSec] = useState<number>(0);
     const [minPerMiMin, setMinPerMiMin] = useState<number>(0);
@@ -40,66 +40,48 @@ const PaceConverter: React.FC = () => {
             setMinPerKmMin(Math.floor(totalSecondsPerKm / 60));
             setMinPerKmSec(Math.round(totalSecondsPerKm % 60));
         }
-    }, [source, debouncedMinPerMiMin, debouncedMinPerMiSec, isMiSecValid  ]);
+    }, [source, debouncedMinPerMiMin, debouncedMinPerMiSec, isMiSecValid]);
 
     const handleMinPerKmMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSource('km');
-        
-        const valueStr = e.target.value.toString().replace(/^0+/, '');
-        
-        if (!/^\d{0,2}$/.test(valueStr)) return;
-
-        const value = valueStr === '' ? 0 : parseInt(valueStr);
-
-        if (isNaN(value) || value < 0 || value > 99) return;
-        
-        setMinPerKmMin(value);
+        const value = validateTimeInput(e.target.value, 'minute');
+        if (value === undefined) {
+            return;
+        } else {
+            setMinPerKmMin(value);
+        }
     };
 
     const handleMinPerKmSecChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSource('km');
-
-        const valueStr = e.target.value.toString().replace(/^0+/, '');
-
-        if (!/^\d{0,2}$/.test(valueStr)) return;
-
-        setIsKmSecValid(true);
-        
-        const value = valueStr === '' ? 0 : parseInt(valueStr, 10);
-        
-        if (isNaN(value) || value < 0 || value > 59) return;
-        
-        setMinPerKmSec(value);
-    };
+        const value = validateTimeInput(e.target.value, 'second');
+        if (value === undefined) {
+            return;
+        } else {
+            setIsKmSecValid(true);
+            setMinPerKmSec(value);
+        }
+    }
 
     const handleMinPerMiMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSource('mi');
-        
-        const valueStr = e.target.value.toString().replace(/^0+/, '');
-
-        if (!/^\d{0,2}$/.test(valueStr)) return;
-        
-        const value = valueStr === '' ? 0 : parseInt(valueStr, 10);
-        
-        if (isNaN(value) || value < 0 || value > 99) return;
-        
-        setMinPerMiMin(value);
-    };
+        const value = validateTimeInput(e.target.value, 'minute');
+        if (value === undefined) {
+            return;
+        } else {
+            setMinPerMiMin(value);
+        }
+    }
 
     const handleMinPerMiSecChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSource('mi');
-
-        const valueStr = e.target.value.toString().replace(/^0+/, '');
-        
-        if (!/^\d{0,2}$/.test(valueStr)) return;
-
-        setIsMiSecValid(true);
-
-        const value = valueStr === '' ? 0 : parseInt(valueStr, 10);
-        
-        if (isNaN(value) || value < 0 || value > 59) return;
-        
-        setMinPerMiSec(value);
+        const value = validateTimeInput(e.target.value, 'second');
+        if (value === undefined) {
+            return;
+        } else {
+            setIsMiSecValid(true);
+            setMinPerMiSec(value);
+        }
     };
 
     return (
@@ -163,5 +145,3 @@ const PaceConverter: React.FC = () => {
         </div>
     );
 }
-
-export default PaceConverter
