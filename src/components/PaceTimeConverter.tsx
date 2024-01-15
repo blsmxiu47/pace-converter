@@ -1,4 +1,3 @@
-/* Component for converting min/km or min/mi pace to race times (e.g. 5k, 10k, half marathon, marathon) */
 import { useState, useEffect } from "react"
 
 import useDebounce from "../hooks/useDebounce"
@@ -11,7 +10,6 @@ const debounceDelay = 200;
 
 export default function PaceTimeConverter() {
     const [paceUnit, setPaceUnit] = useState<'km' | 'mi'>('km');
-    const [totalSecondsPerKm, setTotalSecondsPerKm] = useState<number>(0);
     const [minPerKmMin, setMinPerKmMin] = useState<number>(0);
     const [minPerKmSec, setMinPerKmSec] = useState<number>(0);
     const [minPerMiMin, setMinPerMiMin] = useState<number>(0);
@@ -64,19 +62,10 @@ export default function PaceTimeConverter() {
 
     // pace unit changed
     useEffect(() => {
-        if (paceUnit === 'km') {
-            const totalSecondsPerKm = (debouncedMinPerMiMin * 60 + debouncedMinPerMiSec) * KM_TO_MI;
-            setTotalSecondsPerKm(totalSecondsPerKm);
-            // TODO: set new pace values to display without triggering feedback loop
-            // setMinPerKmMin(Math.floor(totalSecondsPerKm / 60));
-            // setMinPerKmSec(totalSecondsPerKm % 60);
-        } else {
-            const totalSecondsPerKm = debouncedMinPerKmMin * 60 + debouncedMinPerKmSec;
-            setTotalSecondsPerKm(totalSecondsPerKm);
-            // TODO: set new pace values to display without triggering feedback loop
-            // setMinPerMiMin(Math.floor(totalSecondsPerKm / 60));
-            // setMinPerMiSec(totalSecondsPerKm % 60);
-        }
+            setMinPerKmMin(0);
+            setMinPerKmSec(0);
+            setMinPerMiMin(0);
+            setMinPerMiSec(0);
     }, [paceUnit]);
 
     // min/km input changed
@@ -87,7 +76,7 @@ export default function PaceTimeConverter() {
 
     // min/mi input changed
     useEffect(() => {
-        const totalSecondsPerKm = (debouncedMinPerKmMin * 60 + debouncedMinPerKmSec) * KM_TO_MI;
+        const totalSecondsPerKm = (debouncedMinPerMiMin * 60 + debouncedMinPerMiSec) * KM_TO_MI;
         secondsPerKmToTimes(totalSecondsPerKm);
     }, [debouncedMinPerMiMin, debouncedMinPerMiSec]);
 
