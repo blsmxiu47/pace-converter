@@ -26,7 +26,7 @@ export default function PaceTimeConverter() {
     const [marathonTimeHr, setMarathonTimeHr] = useState<number>(0);
     const [marathonTimeMin, setMarathonTimeMin] = useState<number>(0);
     const [marathonTimeSec, setMarathonTimeSec] = useState<number>(0);
-
+    
     const debouncedMinPerKmMin = useDebounce(minPerKmMin, debounceDelay);
     const debouncedMinPerKmSec = useDebounce(minPerKmSec, debounceDelay);
     const debouncedMinPerMiMin = useDebounce(minPerMiMin, debounceDelay);
@@ -43,11 +43,16 @@ export default function PaceTimeConverter() {
     const debouncedMarathonTimeHr = useDebounce(marathonTimeHr, debounceDelay);
     const debouncedMarathonTimeMin = useDebounce(marathonTimeMin, debounceDelay);
     const debouncedMarathonTimeSec = useDebounce(marathonTimeSec, debounceDelay);
-
+    
+    const validTimeUnits = ['hour', 'minute', 'second'];
     const validSources = ['per_km', 'per_mi', '5k', '10k', 'half marathon', 'marathon'];
     const [source, setSource] = useState<typeof validSources[number] | null>(null);
-
-    const validTimeUnits = ['hour', 'minute', 'second'];
+    const timeValues = [
+        { label: '5k', timeHr: fiveKTimeHr, timeMin: fiveKTimeMin, timeSec: fiveKTimeSec },
+        { label: '10k', timeHr: tenKTimeHr, timeMin: tenKTimeMin, timeSec: tenKTimeSec },
+        { label: 'half marathon', timeHr: halfMarathonTimeHr, timeMin: halfMarathonTimeMin, timeSec: halfMarathonTimeSec },
+        { label: 'marathon', timeHr: marathonTimeHr, timeMin: marathonTimeMin, timeSec: marathonTimeSec },
+    ];
 
     function secondsPerKmToTimes(seconds: number) {
         if (source !== 'per_km') {
@@ -247,15 +252,6 @@ export default function PaceTimeConverter() {
             }
         }
     }
-
-
-    // array of timeMin and timeSec values to display
-    const timeValues = [
-        { label: '5k', timeHr: fiveKTimeHr, timeMin: fiveKTimeMin, timeSec: fiveKTimeSec },
-        { label: '10k', timeHr: tenKTimeHr, timeMin: tenKTimeMin, timeSec: tenKTimeSec },
-        { label: 'half marathon', timeHr: halfMarathonTimeHr, timeMin: halfMarathonTimeMin, timeSec: halfMarathonTimeSec },
-        { label: 'marathon', timeHr: marathonTimeHr, timeMin: marathonTimeMin, timeSec: marathonTimeSec },
-    ];
 
     function hourMinuteInputs(inputLabel: typeof validSources[number], timeHr: number, timeMin: number) {
         if (timeHr > 0) {
