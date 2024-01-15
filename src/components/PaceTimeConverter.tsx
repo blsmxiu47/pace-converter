@@ -2,16 +2,20 @@
 import { useState, useEffect } from "react"
 
 import useDebounce from "../hooks/useDebounce"
-import { padZero, unpadZero, handleFocus } from "../utils/utils"
+import { padZero, unpadZero, handleFocus, validateTimeInput } from "../utils/utils"
 
-// const KM_TO_MI = 0.62137119;
-const KM_TO_HM = 21.0975;
-const KM_TO_M = 42.195;
+const KM_TO_MI = 0.62137119;
+const HM_TO_KM = 21.0975;
+const M_TO_KM = 42.195;
 const debounceDelay = 200;
 
 export default function PaceTimeConverter() {
+    const [paceUnit, setPaceUnit] = useState<'km' | 'mi'>('km');
+    const [totalSecondsPerKm, setTotalSecondsPerKm] = useState<number>(0);
     const [minPerKmMin, setMinPerKmMin] = useState<number>(0);
     const [minPerKmSec, setMinPerKmSec] = useState<number>(0);
+    const [minPerMiMin, setMinPerMiMin] = useState<number>(0);
+    const [minPerMiSec, setMinPerMiSec] = useState<number>(0);
     const [fiveKTimeHr, setFiveKTimeHr] = useState<number>(0);
     const [fiveKTimeMin, setFiveKTimeMin] = useState<number>(0);
     const [fiveKTimeSec, setFiveKTimeSec] = useState<number>(0);
@@ -25,72 +29,133 @@ export default function PaceTimeConverter() {
     const [marathonTimeMin, setMarathonTimeMin] = useState<number>(0);
     const [marathonTimeSec, setMarathonTimeSec] = useState<number>(0);
 
-    const [isKmSecValid, setIsKmSecValid] = useState(true);
-    // const [isTimeSecValid, setIsTimeSecValid] = useState(true);
-
-    const [source, setSource] = useState<'km' | 'mi' | null>(null);
+    const validSources = ['per_km', 'per_mi', '5k', '10k', 'half marathon', 'marathon'];
+    const [source, setSource] = useState<typeof validSources[number] | null>(null);
 
     const debouncedMinPerKmMin = useDebounce(minPerKmMin, debounceDelay);
     const debouncedMinPerKmSec = useDebounce(minPerKmSec, debounceDelay);
+    const debouncedMinPerMiMin = useDebounce(minPerMiMin, debounceDelay);
+    const debouncedMinPerMiSec = useDebounce(minPerMiSec, debounceDelay);
     // const debouncedfiveKTimeMin = useDebounce(fiveKTimeMin, debounceDelay);
     // const debouncedfiveKTimeSec = useDebounce(fiveKTimeSec, debounceDelay);
-  
+
+    function secondsPerKmToTimes(seconds: number) {
+        if (source !== '5k') {
+            setFiveKTimeHr(Math.floor(seconds * 5 / 3600));
+            setFiveKTimeMin(Math.floor(seconds * 5 % 3600 / 60));
+            setFiveKTimeSec(seconds * 5 % 60);
+        }
+        if (source !== '10k') {
+            setTenKTimeHr(Math.floor(seconds * 10 / 3600));
+            setTenKTimeMin(Math.floor(seconds * 10 % 3600 / 60));
+            setTenKTimeSec(seconds * 10 % 60);
+        }
+        if (source !== 'half marathon') {
+            setHalfMarathonTimeHr(Math.floor(seconds * HM_TO_KM / 3600));
+            setHalfMarathonTimeMin(Math.floor(seconds * HM_TO_KM % 3600 / 60));
+            setHalfMarathonTimeSec(seconds * HM_TO_KM % 60);
+        }
+        if (source !== 'marathon') {
+            setMarathonTimeHr(Math.floor(seconds * M_TO_KM / 3600));
+            setMarathonTimeMin(Math.floor(seconds * M_TO_KM % 3600 / 60));
+            setMarathonTimeSec(seconds * M_TO_KM % 60);
+        }
+    }
+
+    // pace unit changed
+    useEffect(() => {
+        if (paceUnit === 'km') {
+            const totalSecondsPerKm = (debouncedMinPerMiMin * 60 + debouncedMinPerMiSec) * KM_TO_MI;
+            setTotalSecondsPerKm(totalSecondsPerKm);
+            // TODO: set new pace values to display without triggering feedback loop
+            // setMinPerKmMin(Math.floor(totalSecondsPerKm / 60));
+            // setMinPerKmSec(totalSecondsPerKm % 60);
+        } else {
+            const totalSecondsPerKm = debouncedMinPerKmMin * 60 + debouncedMinPerKmSec;
+            setTotalSecondsPerKm(totalSecondsPerKm);
+            // TODO: set new pace values to display without triggering feedback loop
+            // setMinPerMiMin(Math.floor(totalSecondsPerKm / 60));
+            // setMinPerMiSec(totalSecondsPerKm % 60);
+        }
+    }, [paceUnit]);
+
     // min/km input changed
     useEffect(() => {
-        if (source === 'km' && debouncedMinPerKmMin !== null && debouncedMinPerKmSec !== null && isKmSecValid) {
-            const totalSecondsPerKm = debouncedMinPerKmMin * 60 + debouncedMinPerKmSec;
+        const totalSecondsPerKm = debouncedMinPerKmMin * 60 + debouncedMinPerKmSec;
+        secondsPerKmToTimes(totalSecondsPerKm);
+    }, [debouncedMinPerKmMin, debouncedMinPerKmSec]);
 
-            setFiveKTimeHr(Math.floor(totalSecondsPerKm * 5 / 3600));
-            setFiveKTimeMin(Math.floor(totalSecondsPerKm * 5 % 3600 / 60));
-            setFiveKTimeSec(Math.round(totalSecondsPerKm * 5 % 60));
+    // min/mi input changed
+    useEffect(() => {
+        const totalSecondsPerKm = (debouncedMinPerKmMin * 60 + debouncedMinPerKmSec) * KM_TO_MI;
+        secondsPerKmToTimes(totalSecondsPerKm);
+    }, [debouncedMinPerMiMin, debouncedMinPerMiSec]);
 
-            setTenKTimeHr(Math.floor(totalSecondsPerKm * 10 / 3600));
-            setTenKTimeMin(Math.floor(totalSecondsPerKm * 10 % 3600 / 60));
-            setTenKTimeSec(Math.round(totalSecondsPerKm * 10 % 60));
+    // race time input changed
+    // useEffect(() => {
+    //     if (source === '5k' && fiveKTimeMin !== null && fiveKTimeSec !== null) {
+    //         const totalSecondsPerKm = (fiveKTimeMin * 60 + fiveKTimeSec) / 5;
+    //         const totalSecondsPerMi = totalSecondsPerKm / KM_TO_MI;
+    //         switch (paceUnit) {
+    //             case 'km':
+    //                 setMinPerKmMin(Math.floor(totalSecondsPerKm / 60));
+    //                 setMinPerKmSec(totalSecondsPerKm % 60);
+    //                 break;
+    //             case 'mi':
+    //                 setMinPerMiMin(Math.floor(totalSecondsPerMi / 60));
+    //                 setMinPerMiSec(totalSecondsPerMi % 60);
+    //                 break;
+    //         }
+    //     }
+    // })
 
-            setHalfMarathonTimeHr(Math.floor(totalSecondsPerKm * KM_TO_HM / 3600));
-            setHalfMarathonTimeMin(Math.floor(totalSecondsPerKm * KM_TO_HM % 3600 / 60));
-            setHalfMarathonTimeSec(Math.round(totalSecondsPerKm * KM_TO_HM % 60));
-
-            setMarathonTimeHr(Math.floor(totalSecondsPerKm * KM_TO_M / 3600));
-            setMarathonTimeMin(Math.floor(totalSecondsPerKm * KM_TO_M % 3600 / 60));
-            setMarathonTimeSec(Math.round(totalSecondsPerKm * KM_TO_M % 60));
-        }
-    }, [source, debouncedMinPerKmMin, debouncedMinPerKmSec, isKmSecValid]);
+    const handlePaceUnitChange = (unit: 'km' | 'mi') => (e: React.ChangeEvent<HTMLInputElement>) => {
+        setPaceUnit(unit);
+    } 
 
     const handleMinPerKmMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSource('km');
-        
-        const valueStr = e.target.value.toString().replace(/^0+/, '');
-        
-        if (!/^\d{0,2}$/.test(valueStr)) return;
-
-        const value = valueStr === '' ? 0 : parseInt(valueStr);
-
-        if (isNaN(value) || value < 0 || value > 99) return;
-        
-        setMinPerKmMin(value);
+        setSource('per_km');
+        const value = validateTimeInput(e.target.value, 'minute');
+        if (value === undefined) {
+            return;
+        } else {
+            setMinPerKmMin(value);
+        }
     };
 
     const handleMinPerKmSecChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSource('km');
+        setSource('per_km');
+        const value = validateTimeInput(e.target.value, 'second');
+        if (value === undefined) {
+            return;
+        } else {
+            setMinPerKmSec(value);
+        }
+    }
 
-        const valueStr = e.target.value.toString().replace(/^0+/, '');
+    const handleMinPerMiMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSource('per_mi');
+        const value = validateTimeInput(e.target.value, 'minute');
+        if (value === undefined) {
+            return;
+        } else {
+            setMinPerMiMin(value);
+        }
+    }
 
-        if (!/^\d{0,2}$/.test(valueStr)) return;
-
-        setIsKmSecValid(true);
-        
-        const value = valueStr === '' ? 0 : parseInt(valueStr, 10);
-        
-        if (isNaN(value) || value < 0 || value > 59) return;
-        
-        setMinPerKmSec(value);
+    const handleMinPerMiSecChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSource('per_mi');
+        const value = validateTimeInput(e.target.value, 'second');
+        if (value === undefined) {
+            return;
+        } else {
+            setMinPerMiSec(value);
+        }
     };
 
     // array of timeMin and timeSec values to display
     const timeValues = [
-        { label: '5k', timeHr: fiveKTimeHr, fiveKTimeHr, timeMin: fiveKTimeMin, timeSec: fiveKTimeSec },
+        { label: '5k', timeHr: fiveKTimeHr, timeMin: fiveKTimeMin, timeSec: fiveKTimeSec },
         { label: '10k', timeHr: tenKTimeHr, timeMin: tenKTimeMin, timeSec: tenKTimeSec },
         { label: 'half marathon', timeHr: halfMarathonTimeHr, timeMin: halfMarathonTimeMin, timeSec: halfMarathonTimeSec },
         { label: 'marathon', timeHr: marathonTimeHr, timeMin: marathonTimeMin, timeSec: marathonTimeSec },
@@ -142,16 +207,38 @@ export default function PaceTimeConverter() {
     return (
         <div className="converter">
             <div className='input-group'>
+                <div className="units-switch">
+                    <label>
+                        min / km
+                        <input
+                            type="radio"
+                            name="pace-unit"
+                            value="km"
+                            checked={paceUnit === 'km'}
+                            onChange={handlePaceUnitChange('km')}
+                        />
+                    </label>
+                    <label>
+                        min / mi
+                        <input
+                            type="radio"
+                            name="pace-unit"
+                            value="mi"
+                            checked={paceUnit === 'mi'}
+                            onChange={handlePaceUnitChange('mi')}
+                        />
+                    </label>
+                </div>
                 <label>
-                    min / km
+                    min / {paceUnit}
                     <div className='time-input'>
                         <input
                             type="number"
                             pattern="\d{0,2}"
                             className='input-value'
-                            value={unpadZero(minPerKmMin)}
+                            value={paceUnit === 'km' ? unpadZero(minPerKmMin) : unpadZero(minPerMiMin)}
                             onFocus={handleFocus} 
-                            onChange={handleMinPerKmMinChange}
+                            onChange={paceUnit === 'km' ? handleMinPerKmMinChange : handleMinPerMiMinChange}
                             min={0}
                             max={99}
                         />
@@ -160,9 +247,9 @@ export default function PaceTimeConverter() {
                             type="number"
                             pattern="\d{0,2}"
                             className='input-value'
-                            value={padZero(minPerKmSec)}
+                            value={paceUnit === 'km' ? padZero(minPerKmSec) : padZero(minPerMiSec)}
                             onFocus={handleFocus} 
-                            onChange={handleMinPerKmSecChange}
+                            onChange={paceUnit === 'km' ? handleMinPerKmSecChange : handleMinPerMiSecChange}
                             min={0}
                             max={59}
                         />
