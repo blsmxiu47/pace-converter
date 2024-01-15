@@ -27,17 +27,38 @@ export default function PaceTimeConverter() {
     const [marathonTimeMin, setMarathonTimeMin] = useState<number>(0);
     const [marathonTimeSec, setMarathonTimeSec] = useState<number>(0);
 
-    const validSources = ['per_km', 'per_mi', '5k', '10k', 'half marathon', 'marathon'];
-    const [source, setSource] = useState<typeof validSources[number] | null>(null);
-
     const debouncedMinPerKmMin = useDebounce(minPerKmMin, debounceDelay);
     const debouncedMinPerKmSec = useDebounce(minPerKmSec, debounceDelay);
     const debouncedMinPerMiMin = useDebounce(minPerMiMin, debounceDelay);
     const debouncedMinPerMiSec = useDebounce(minPerMiSec, debounceDelay);
-    // const debouncedfiveKTimeMin = useDebounce(fiveKTimeMin, debounceDelay);
-    // const debouncedfiveKTimeSec = useDebounce(fiveKTimeSec, debounceDelay);
+    const debouncedFiveKTimeHr = useDebounce(fiveKTimeHr, debounceDelay);
+    const debouncedFiveKTimeMin = useDebounce(fiveKTimeMin, debounceDelay);
+    const debouncedFiveKTimeSec = useDebounce(fiveKTimeSec, debounceDelay);
+    const debouncedTenKTimeHr = useDebounce(tenKTimeHr, debounceDelay);
+    const debouncedTenKTimeMin = useDebounce(tenKTimeMin, debounceDelay);
+    const debouncedTenKTimeSec = useDebounce(tenKTimeSec, debounceDelay);
+    const debouncedHalfMarathonTimeHr = useDebounce(halfMarathonTimeHr, debounceDelay);
+    const debouncedHalfMarathonTimeMin = useDebounce(halfMarathonTimeMin, debounceDelay);
+    const debouncedHalfMarathonTimeSec = useDebounce(halfMarathonTimeSec, debounceDelay);
+    const debouncedMarathonTimeHr = useDebounce(marathonTimeHr, debounceDelay);
+    const debouncedMarathonTimeMin = useDebounce(marathonTimeMin, debounceDelay);
+    const debouncedMarathonTimeSec = useDebounce(marathonTimeSec, debounceDelay);
+
+    const validSources = ['per_km', 'per_mi', '5k', '10k', 'half marathon', 'marathon'];
+    const [source, setSource] = useState<typeof validSources[number] | null>(null);
+
+    const validTimeUnits = ['hour', 'minute', 'second'];
 
     function secondsPerKmToTimes(seconds: number) {
+        if (source !== 'per_km') {
+            setMinPerKmMin(Math.floor(seconds / 60));
+            setMinPerKmSec(seconds % 60);
+        }
+        if (source !== 'per_mi') {
+            const totalSecondsPerMi = seconds / KM_TO_MI;
+            setMinPerMiMin(Math.floor(totalSecondsPerMi / 60));
+            setMinPerMiSec(Math.round(totalSecondsPerMi % 60));
+        }
         if (source !== '5k') {
             setFiveKTimeHr(Math.floor(seconds * 5 / 3600));
             setFiveKTimeMin(Math.floor(seconds * 5 % 3600 / 60));
@@ -66,41 +87,67 @@ export default function PaceTimeConverter() {
             setMinPerKmSec(0);
             setMinPerMiMin(0);
             setMinPerMiSec(0);
+            setFiveKTimeHr(0);
+            setFiveKTimeMin(0);
+            setFiveKTimeSec(0);
+            setTenKTimeHr(0);
+            setTenKTimeMin(0);
+            setTenKTimeSec(0);
+            setHalfMarathonTimeHr(0);
+            setHalfMarathonTimeMin(0);
+            setHalfMarathonTimeSec(0);
+            setMarathonTimeHr(0);
+            setMarathonTimeMin(0);
+            setMarathonTimeSec(0);
     }, [paceUnit]);
 
     // min/km input changed
     useEffect(() => {
-        const totalSecondsPerKm = debouncedMinPerKmMin * 60 + debouncedMinPerKmSec;
-        secondsPerKmToTimes(totalSecondsPerKm);
-    }, [debouncedMinPerKmMin, debouncedMinPerKmSec]);
+        if (source === 'per_km') {
+            const totalSecondsPerKm = debouncedMinPerKmMin * 60 + debouncedMinPerKmSec;
+            secondsPerKmToTimes(totalSecondsPerKm);
+        }
+    }, [source, debouncedMinPerKmMin, debouncedMinPerKmSec]);
 
     // min/mi input changed
     useEffect(() => {
-        const totalSecondsPerKm = (debouncedMinPerMiMin * 60 + debouncedMinPerMiSec) * KM_TO_MI;
-        secondsPerKmToTimes(totalSecondsPerKm);
-    }, [debouncedMinPerMiMin, debouncedMinPerMiSec]);
+        if (source === 'per_mi') {
+            const totalSecondsPerKm = (debouncedMinPerMiMin * 60 + debouncedMinPerMiSec) * KM_TO_MI;
+            secondsPerKmToTimes(totalSecondsPerKm);
+        }
+    }, [source, debouncedMinPerMiMin, debouncedMinPerMiSec]);
 
-    // race time input changed
-    // useEffect(() => {
-    //     if (source === '5k' && fiveKTimeMin !== null && fiveKTimeSec !== null) {
-    //         const totalSecondsPerKm = (fiveKTimeMin * 60 + fiveKTimeSec) / 5;
-    //         const totalSecondsPerMi = totalSecondsPerKm / KM_TO_MI;
-    //         switch (paceUnit) {
-    //             case 'km':
-    //                 setMinPerKmMin(Math.floor(totalSecondsPerKm / 60));
-    //                 setMinPerKmSec(totalSecondsPerKm % 60);
-    //                 break;
-    //             case 'mi':
-    //                 setMinPerMiMin(Math.floor(totalSecondsPerMi / 60));
-    //                 setMinPerMiSec(totalSecondsPerMi % 60);
-    //                 break;
-    //         }
-    //     }
-    // })
+    // 5k time input changed
+    useEffect(() => {
+        if (source === '5k') {
+            const totalSecondsPerKm = (debouncedFiveKTimeHr * 3600 + debouncedFiveKTimeMin * 60 + debouncedFiveKTimeSec) / 5;
+            secondsPerKmToTimes(totalSecondsPerKm);
+        }
+    }, [source, debouncedFiveKTimeHr, debouncedFiveKTimeMin, debouncedFiveKTimeSec]);
 
-    const handlePaceUnitChange = (unit: 'km' | 'mi') => (e: React.ChangeEvent<HTMLInputElement>) => {
-        setPaceUnit(unit);
-    } 
+    // 10k time input changed
+    useEffect(() => {
+        if (source === '10k') {
+            const totalSecondsPerKm = (debouncedTenKTimeHr * 3600 + debouncedTenKTimeMin * 60 + debouncedTenKTimeSec) / 10;
+            secondsPerKmToTimes(totalSecondsPerKm);
+        }
+    }, [source, debouncedTenKTimeHr, debouncedTenKTimeMin, debouncedTenKTimeSec]);
+
+    // half marathon time input changed
+    useEffect(() => {
+        if (source === 'half marathon') {
+            const totalSecondsPerKm = (debouncedHalfMarathonTimeHr * 3600 + debouncedHalfMarathonTimeMin * 60 + debouncedHalfMarathonTimeSec) / HM_TO_KM;
+            secondsPerKmToTimes(totalSecondsPerKm);
+        }
+    }, [source, debouncedHalfMarathonTimeHr, debouncedHalfMarathonTimeMin, debouncedHalfMarathonTimeSec]);
+
+    // marathon time input changed
+    useEffect(() => {
+        if (source === 'marathon') {
+            const totalSecondsPerKm = (debouncedMarathonTimeHr * 3600 + debouncedMarathonTimeMin * 60 + debouncedMarathonTimeSec) / M_TO_KM;
+            secondsPerKmToTimes(totalSecondsPerKm);
+        }
+    }, [source, debouncedMarathonTimeHr, debouncedMarathonTimeMin, debouncedMarathonTimeSec]);
 
     const handleMinPerKmMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSource('per_km');
@@ -142,6 +189,66 @@ export default function PaceTimeConverter() {
         }
     };
 
+    const handleTimeInputChange = (e: React.ChangeEvent<HTMLInputElement>, source: typeof validSources[number], timeUnit: typeof validTimeUnits[number]) => {
+        setSource(source);
+        const value = validateTimeInput(e.target.value, timeUnit);
+        if (value === undefined) {
+            return;
+        } else {
+            switch (timeUnit) {
+                case 'hour':
+                    switch (source) {
+                        case '5k':
+                            setFiveKTimeHr(value);
+                            break;
+                        case '10k':
+                            setTenKTimeHr(value);
+                            break;
+                        case 'half marathon':
+                            setHalfMarathonTimeHr(value);
+                            break;
+                        case 'marathon':
+                            setMarathonTimeHr(value);
+                            break;
+                    }
+                    break;
+                case 'minute':
+                    switch (source) {
+                        case '5k':
+                            setFiveKTimeMin(value);
+                            break;
+                        case '10k':
+                            setTenKTimeMin(value);
+                            break;
+                        case 'half marathon':
+                            setHalfMarathonTimeMin(value);
+                            break;
+                        case 'marathon':
+                            setMarathonTimeMin(value);
+                            break;
+                    }
+                    break;
+                case 'second':
+                    switch (source) {
+                        case '5k':
+                            setFiveKTimeSec(value);
+                            break;
+                        case '10k':
+                            setTenKTimeSec(value);
+                            break;
+                        case 'half marathon':
+                            setHalfMarathonTimeSec(value);
+                            break;
+                        case 'marathon':
+                            setMarathonTimeSec(value);
+                            break;
+                    }
+                    break;
+            }
+        }
+    }
+
+
     // array of timeMin and timeSec values to display
     const timeValues = [
         { label: '5k', timeHr: fiveKTimeHr, timeMin: fiveKTimeMin, timeSec: fiveKTimeSec },
@@ -150,7 +257,7 @@ export default function PaceTimeConverter() {
         { label: 'marathon', timeHr: marathonTimeHr, timeMin: marathonTimeMin, timeSec: marathonTimeSec },
     ];
 
-    function hourMinuteInputs(timeHr: number, timeMin: number) {
+    function hourMinuteInputs(inputLabel: typeof validSources[number], timeHr: number, timeMin: number) {
         if (timeHr > 0) {
             return (
                 <>
@@ -160,7 +267,7 @@ export default function PaceTimeConverter() {
                         className='input-value'
                         value={unpadZero(timeHr)}
                         onFocus={handleFocus} 
-                        // onChange={handleTimeSecChange}
+                        onChange={(e) => handleTimeInputChange(e, inputLabel, 'hour')}
                         min={0}
                         max={99}
                     />
@@ -171,7 +278,7 @@ export default function PaceTimeConverter() {
                         className='input-value'
                         value={padZero(timeMin)}
                         onFocus={handleFocus} 
-                        // onChange={handleTimeSecChange}
+                        onChange={(e) => handleTimeInputChange(e, inputLabel, 'minute')}
                         min={0}
                         max={59}
                     />
@@ -185,7 +292,7 @@ export default function PaceTimeConverter() {
                     className='input-value'
                     value={unpadZero(timeMin)}
                     onFocus={handleFocus} 
-                    // onChange={handleTimeSecChange}
+                    onChange={(e) => handleTimeInputChange(e, inputLabel, 'minute')}
                     min={0}
                     max={99}
                 />
@@ -204,7 +311,7 @@ export default function PaceTimeConverter() {
                             name="pace-unit"
                             value="km"
                             checked={paceUnit === 'km'}
-                            onChange={handlePaceUnitChange('km')}
+                            onChange={() => setPaceUnit('km')}
                         />
                     </label>
                     <label>
@@ -214,7 +321,7 @@ export default function PaceTimeConverter() {
                             name="pace-unit"
                             value="mi"
                             checked={paceUnit === 'mi'}
-                            onChange={handlePaceUnitChange('mi')}
+                            onChange={() => setPaceUnit('mi')}
                         />
                     </label>
                 </div>
@@ -251,7 +358,7 @@ export default function PaceTimeConverter() {
                         <label>
                             {time.label}
                             <div className='time-input'>
-                                {hourMinuteInputs(time.timeHr, time.timeMin)}
+                                {hourMinuteInputs(time.label, time.timeHr, time.timeMin)}
                                 <span>:</span>
                                 <input
                                     type="number"
@@ -259,7 +366,7 @@ export default function PaceTimeConverter() {
                                     className='input-value'
                                     value={padZero(time.timeSec)}
                                     onFocus={handleFocus} 
-                                    // onChange={handleTimeSecChange}
+                                    onChange={(e) => handleTimeInputChange(e, time.label, 'second')}
                                     min={0}
                                     max={59}
                                 />
